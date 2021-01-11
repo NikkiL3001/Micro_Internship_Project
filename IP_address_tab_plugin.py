@@ -19,10 +19,17 @@ from threading import Lock
 import socket
 import json
 import datetime
+from pathlib import Path
 
-#load dictionary containing {hostname : IP addresses} {key : value} pairs
-with open('DNS_file.txt') as file:
-    dns_database = json.load(file)
+
+#st up dictionary containing {hostname : IP addresses} {key : value} pairs
+database_file = Path('DNS_file.txt')
+if database_file.exists():
+    with database_file.open('r') as file:
+        dns_database = json.load(file)
+else:
+    database_file.touch()
+    dns_database={}
 
 class BurpExtender(IBurpExtender, ITab, IHttpListener, IMessageEditorController, IExtensionStateListener, AbstractTableModel):
     
@@ -183,7 +190,7 @@ class BurpExtender(IBurpExtender, ITab, IHttpListener, IMessageEditorController,
 
     def extensionUnloaded(self):
         #save dictionary to file upon unloading the extension
-        with open('DNS_file.txt', 'w') as file:  
+        with database_file.open('w') as file:  
             file.write(json.dumps(dns_database))
         return
 
