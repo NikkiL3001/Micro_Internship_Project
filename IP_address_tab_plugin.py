@@ -110,11 +110,9 @@ class BurpExtender(IBurpExtender, ITab, IHttpListener, IMessageEditorController,
         else:
             hostname_without_prefix=hostname
        
-        # check if hostname is already in the dictionary
+        # check if hostname is already in dictionary, else retrieve all corresponding IP addresses and add to dictionary 
         if hostname_without_prefix in dns_database:
-            IP_addresses=dns_database[hostname_without_prefix]
-
-        # if not already in the dictionary, retrieve all corresponding IP addresses and add to dictionary         
+            IP_addresses=dns_database[hostname_without_prefix]       
         else:
             try:
                 address_info=socket.getaddrinfo(hostname_without_prefix, 0, socket.AF_INET, socket.SOCK_STREAM)
