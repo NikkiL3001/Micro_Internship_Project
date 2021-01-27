@@ -106,29 +106,29 @@ class BurpExtender(IBurpExtender, ITab, IHttpListener, IMessageEditorController,
         hostname=str(messageInfo.getHost())
 
         if hostname.startswith('www.'):
-            short_hostname = hostname.replace('www.','')
+            hostname_without_prefix = hostname.replace('www.','')
         else:
-            short_hostname=hostname
+            hostname_without_prefix=hostname
        
         # check if hostname is already in the dictionary
-        if short_hostname in dns_database:
-            IP_addresses=dns_database[short_hostname]
+        if hostname_without_prefix in dns_database:
+            IP_addresses=dns_database[hostname_without_prefix]
 
         # if not already in the dictionary, retrieve all corresponding IP addresses and add to dictionary         
         else:
             try:
-                full_address_list=socket.getaddrinfo(short_hostname, 0, socket.AF_INET, socket.SOCK_STREAM)
+                address_info=socket.getaddrinfo(hostname_without_prefix, 0, socket.AF_INET, socket.SOCK_STREAM)
                 IP_addresses=[]
-                for address in range(len(full_address_list)):
-                    IP_addresses.append(full_address_list[address][-1][0])
-                dns_database[short_hostname]=IP_addresses
+                for address in range(len(address_info)):
+                    IP_addresses.append(address_info[address][-1][0])
+                dns_database[hostname_without_prefix]=IP_addresses
             except:
                 IP_addresses='error'
 
 
         self._lock.acquire()
         row = self._log.size()
-        self._log.add(LogEntry(toolFlag, self._callbacks.saveBuffersToTempFiles(messageInfo), short_hostname, IP_addresses, datetime.datetime.now()))
+        self._log.add(LogEntry(toolFlag, self._callbacks.saveBuffersToTempFiles(messageInfo), hostname_without_prefix, IP_addresses, datetime.datetime.now()))
         self.fireTableRowsInserted(row, row)
         self._lock.release()
 
