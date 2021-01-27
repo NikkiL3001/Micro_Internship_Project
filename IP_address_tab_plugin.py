@@ -44,7 +44,7 @@ class BurpExtender(IBurpExtender, ITab, IHttpListener, IMessageEditorController,
         self._helpers = callbacks.getHelpers()
         
         # set our extension name
-        callbacks.setExtensionName("Nikki's first plug-in")
+        callbacks.setExtensionName("IP Address Logger")
         
         # create the log and a lock on which to synchronize when adding log entries
         self._log = ArrayList()
