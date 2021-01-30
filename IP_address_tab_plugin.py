@@ -28,7 +28,8 @@ if os.path.isfile(database_fname):
     with open(database_fname, 'r') as file:
         dns_database = json.load(file)
 else:
-    dns_database={}
+    dns_database = {}
+
 
 class BurpExtender(IBurpExtender, ITab, IHttpListener, IMessageEditorController, IExtensionStateListener, AbstractTableModel):
     
@@ -103,25 +104,25 @@ class BurpExtender(IBurpExtender, ITab, IHttpListener, IMessageEditorController,
             return
         
         # create a new log entry with the message details
-        hostname=str(messageInfo.getHost())
+        hostname = str(messageInfo.getHost())
 
         if hostname.startswith('www.'):
             hostname_without_prefix = hostname.replace('www.','')
         else:
-            hostname_without_prefix=hostname
+            hostname_without_prefix = hostname
        
         # check if hostname is already in dictionary, else retrieve all corresponding IP addresses and add to dictionary 
         if hostname_without_prefix in dns_database:
-            IP_addresses=dns_database[hostname_without_prefix]       
+            IP_addresses = dns_database[hostname_without_prefix]       
         else:
             try:
-                address_info=socket.getaddrinfo(hostname_without_prefix, 0, socket.AF_INET, socket.SOCK_STREAM)
-                IP_addresses=[]
+                address_info = socket.getaddrinfo(hostname_without_prefix, 0, socket.AF_INET, socket.SOCK_STREAM)
+                IP_addresses = []
                 for address in range(len(address_info)):
                     IP_addresses.append(address_info[address][-1][0])
-                dns_database[hostname_without_prefix]=IP_addresses
+                dns_database[hostname_without_prefix] = IP_addresses
             except:
-                IP_addresses='error'
+                IP_addresses = 'error'
 
 
         self._lock.acquire()
